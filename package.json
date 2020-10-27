@@ -1,0 +1,35 @@
+{
+  "name": "ethcommerce-contracts",
+  "version": "0.0.1",
+  "description": "Solidity based smart-contracts for a decentralized eCommerce platform",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^3.2.1-solc-0.7",
+    "solc": "^0.7.4",
+    "truffle": "^5.1.50",
+    "truffle-assertions": "^0.9.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "truffle test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethCommerce/ethcommerce-contracts.git"
+  },
+  "keywords": [
+    "ethereum",
+    "xdai",
+    "solidity",
+    "ecommerce"
+  ],
+  "author": "Maximiliaan van Dijk",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ethCommerce/ethcommerce-contracts/issues"
+  },
+  "homepage": "https://github.com/ethCommerce/ethcommerce-contracts#readme"
+}
