@@ -28,7 +28,7 @@ contract Invoice is PullPayment {
     
     constructor (address _customer, string memory _customerPublicKey, address[] memory _products, uint32[] memory _quantities) {
         customer = _customer;
-        customerPublicKey = _customerPublicKey
+        customerPublicKey = _customerPublicKey;
         products = _products;
         quantities = _quantities;
         vendor = Vendor(msg.sender);
