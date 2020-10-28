@@ -61,6 +61,10 @@ contract Invoice is PullPayment {
         _asyncTransfer(vendor.owner(), msg.value);
         status = Status.Paid;
 
+        for (uint i = 0; i < products.length; i++) {
+            vendor.subtractStock(products[i], quantities[i]);
+        }
+
         emit StatusUpdate("Paid");
     }
 
