@@ -40,7 +40,7 @@ module.exports = {
       host: "localhost",
       port: 7545,
       network_id: "5777",
-      websockets: true
+      //websockets: true
     }
     // Useful for testing. The `development` name is special - truffle uses it by default
     // if it's defined here and no other network is specified at the command line.
