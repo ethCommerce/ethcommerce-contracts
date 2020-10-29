@@ -18,7 +18,7 @@ contract Product {
 
     event UpdatedTitle (string title);
     event UpdatedDescription (string description);
-    event UpdatedPrice (string price);
+    event UpdatedPrice (uint price);
     event UpdatedStock (uint32 stock);
 
     Vendor public vendor;
