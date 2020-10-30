@@ -17,10 +17,22 @@ contract Vendor is Ownable {
     event VendorRegistered (uint vendorId, address owner);
 
     VendorAccessControlInterface public accessControl;
-    //VendorNS public vendorNS;
+    VendorNSInterface public nameService;
     VendorDataInterface public data;
     //VendorInvoiceInterface public invoice;
     VendorProductInterface public product;
+
+    /**
+     * VendorNS implementation
+     */
+
+    function getVendorIdByName (bytes32 _name) public view returns (uint) {
+        return nameService.getVendorIdByName(_name);
+    }
+
+    function registerVendorName (uint _vendorId, bytes32 _name) public {
+        nameService.registerVendorName(_vendorId, _name);
+    }
 
     /**
      * AccessControl contract implementation
@@ -31,7 +43,6 @@ contract Vendor is Ownable {
 
         emit VendorRegistered (vendorId, msg.sender);
     }
-
 
     function changeOwner (uint _vendorId, address _newOwner) public {
         accessControl.changeOwner(_vendorId, _newOwner, msg.sender);
@@ -70,6 +81,7 @@ contract Vendor is Ownable {
 
     function setContracts (
         address _accessControl,
+        address _nameService,
         address _data,
         //address _invoice,
         address _product
@@ -77,6 +89,7 @@ contract Vendor is Ownable {
         require(!contractLock);
 
         accessControl = VendorAccessControlInterface(_accessControl);
+        nameService = VendorNSInterface(_nameService);
         data = VendorDataInterface(_data);
         product = VendorProductInterface(_product);
         
