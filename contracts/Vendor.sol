@@ -1,73 +1,98 @@
 // SPDX-License-Identifier: WTFPL
 
 pragma solidity ^0.7.0;
+pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
-import "./Product.sol";
-import "./Invoice.sol";
+import "./Vendor/VendorAccessControl.sol";
+import "./Vendor/VendorData.sol";
+//import "./Vendor/VendorInvoice.sol";
+import "./Vendor/VendorNS.sol";
+import "./Vendor/VendorProduct.sol";
 
 contract Vendor is Ownable {
-    using SafeMath for uint;
 
-    Product[] public products;
-    Invoice[] public invoices;
-    mapping(address => bool) public productExists;
-    mapping(address => bool) public invoiceExists;
+    event VendorRegistered (uint vendorId, address owner);
 
-    event ProductCreated (address contractAddress);
-    event InvoiceCreated (address contractAddress);
+    VendorAccessControlInterface public accessControl;
+    VendorNSInterface public nameService;
+    VendorDataInterface public data;
+    //VendorInvoiceInterface public invoice;
+    VendorProductInterface public product;
 
-    struct Data {
-        bytes publicKey;
-        bytes32 title;
-        bytes32 description;
-        bytes32 thumbnail;
-    }
-    Data public data;
+    /**
+     * VendorNS implementation
+     */
 
-    constructor (bytes32 _title, bytes32 _description) {
-        data.title = _title;
-        data.description = _description;
+    function getVendorIdByName (bytes32 _name) public view returns (uint) {
+        return nameService.getVendorIdByName(_name);
     }
 
-    function createProduct (string calldata _title, string calldata _description, uint _price) onlyOwner public {
-        Product product = new Product(_title, _description, _price);
-
-        products.push(product);
-        productExists[address(product)] = true;
-
-        emit ProductCreated(address(product));
+    function registerVendorName (uint _vendorId, bytes32 _name) public {
+        nameService.registerVendorName(_vendorId, _name);
     }
 
-    function createInvoice (string calldata _publicKey, address[] calldata _products, uint[] calldata _quantities) public {
-        require(_quantities.length == _products.length);
+    /**
+     * AccessControl contract implementation
+     */
 
-        for (uint i = 0; i < _products.length; i++) {
-            require(_quantities[i] > 0);
-            require(productExists[_products[i]]);
-            require(Product(_products[i]).stock() >= _quantities[i]);
-        }
+    function register () public {
+        uint vendorId = accessControl.registerVendor(msg.sender);
 
-        Invoice invoice = new Invoice(msg.sender, _publicKey, _products, _quantities);
-
-        invoices.push(invoice);
-        invoiceExists[address(invoice)] = true;
-
-        emit InvoiceCreated (address(invoice));
+        emit VendorRegistered (vendorId, msg.sender);
     }
 
-    function subtractStock (address _product, uint _boughtStock) public {
-        require(invoiceExists[msg.sender]);
+    function changeOwner (uint _vendorId, address _newOwner) public {
+        accessControl.changeOwner(_vendorId, _newOwner, msg.sender);
+    }
 
-        Product product = Product(_product);
+    /**
+     *  Data contract implementation 
+     */
 
-        require(product.stock() >= _boughtStock, "Out of stock");
+    function getData (uint _vendorId) public view returns (VendorDataInterface.Data memory) {
+        return data.getData(_vendorId);
+    }
 
-        uint productStock = product.stock();
-        uint stockToSubstract = productStock.sub(_boughtStock);
+    function setTitle (uint _vendorId, bytes32 _title) onlyVendorOwner(_vendorId) public {
+        data.setTitle(_vendorId, _title);
+    }
 
-        product.updateStock(stockToSubstract);
+    function setDescription (uint _vendorId, bytes32 _description) onlyVendorOwner(_vendorId) public {
+        data.setDescription(_vendorId, _description);
+    }
+
+    function setThumbnail (uint _vendorId, bytes32 _thumbnail) onlyVendorOwner(_vendorId) public {
+        data.setThumbnail(_vendorId, _thumbnail);
+    }
+
+    modifier onlyVendorOwner (uint _vendorId) {
+        require(accessControl.isVendorOwnedByAddress(_vendorId, msg.sender), "not permitted");
+        _;
+    }
+
+    /*
+     * Set contract helper
+     */
+
+    bool contractLock;
+
+    function setContracts (
+        address _accessControl,
+        address _nameService,
+        address _data,
+        //address _invoice,
+        address _product
+    ) public onlyOwner {
+        require(!contractLock);
+
+        accessControl = VendorAccessControlInterface(_accessControl);
+        nameService = VendorNSInterface(_nameService);
+        data = VendorDataInterface(_data);
+        product = VendorProductInterface(_product);
+        
+        contractLock = true;
     }
 }
