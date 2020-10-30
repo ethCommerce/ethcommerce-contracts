@@ -19,7 +19,9 @@
     "typechain": "2.0.0",
     "typescript": "^3.8.3"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "eth-gas-reporter": "^0.2.19"
+  },
   "scripts": {
     "test": "truffle test",
     "generate-types": "typechain --target=truffle-v5 'build/contracts/*.json'",
