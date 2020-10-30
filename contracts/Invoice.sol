@@ -17,7 +17,7 @@ contract Invoice is PullPayment {
     Vendor public vendor;
 
     address[] public products;
-    uint32[] public quantities;
+    uint[] public quantities;
 
     uint public totalPrice;
     uint public shippingCosts;
@@ -26,7 +26,7 @@ contract Invoice is PullPayment {
     Status public status;
     event StatusUpdate (string currentStatus);
     
-    constructor (address _customer, string memory _customerPublicKey, address[] memory _products, uint32[] memory _quantities) {
+    constructor (address _customer, string memory _customerPublicKey, address[] memory _products, uint[] memory _quantities) {
         customer = _customer;
         customerPublicKey = _customerPublicKey;
         products = _products;

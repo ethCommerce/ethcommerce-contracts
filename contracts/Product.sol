@@ -14,12 +14,12 @@ contract Product {
     string public title;
     string public description;
     uint public price;
-    uint32 public stock;
+    uint public stock;
 
     event UpdatedTitle (string title);
     event UpdatedDescription (string description);
     event UpdatedPrice (uint price);
-    event UpdatedStock (uint32 stock);
+    event UpdatedStock (uint stock);
 
     Vendor public vendor;
 
@@ -53,7 +53,7 @@ contract Product {
         emit UpdatedPrice(_price);
     }
 
-    function updateStock (uint32 _stock) public  {
+    function updateStock (uint _stock) public  {
         require(vendor.owner() == msg.sender || address(vendor) == msg.sender, "No permission");
 
         stock = _stock;
