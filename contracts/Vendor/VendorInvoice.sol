@@ -34,7 +34,7 @@ contract VendorInvoice is Ownable, ReentrancyGuard, PullPayment {
         bytes32 clientPublicKeyHash;
     }
 
-    function get (uint _invoiceId) public view returns (Invoice) {
+    function get (uint _invoiceId) public view returns (Invoice memory) {
         return invoices[_invoiceId];
     }
 
@@ -98,4 +98,22 @@ contract VendorInvoice is Ownable, ReentrancyGuard, PullPayment {
     }
 }
 
+contract VendorInvoiceInterface {
+    function create (
+        uint _vendorId,
+        address _clientAddress,
+        uint[] calldata  _productIds,
+        uint[] calldata _quantities,
+        bytes32 _deliveryAddressHash,
+        bytes32 _clientPublicKeyHash
+    ) public {}
+
+    function accept (uint _invoiceId, uint _shippingPrice) public {}
+
+    function pay (uint _invoiceId, address _vendorAddress) public payable {}
+
+    function send (uint _invoiceId, bytes32 _shipmentDataHash) public {}
+
+    function received (uint _invoiceId, address _clientAddress) public {}
+}
 
