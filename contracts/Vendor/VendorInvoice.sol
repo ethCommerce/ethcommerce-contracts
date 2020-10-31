@@ -99,6 +99,29 @@ contract VendorInvoice is Ownable, ReentrancyGuard, PullPayment {
 }
 
 contract VendorInvoiceInterface {
+    enum Status {
+        Created,
+        Accepted,
+        Paid,
+        Sent,
+        Received
+    }
+
+    struct Invoice {
+        uint vendorId;
+        Status status;
+        uint[] productIds;
+        uint[] quantities;
+        uint productsCost;
+        uint shippingCost;
+        bytes32 deliveryAddressHash; // IPFS hash
+        bytes32 shipmentDataHash; // IPFS hash
+        address clientAddress;
+        bytes32 clientPublicKeyHash;
+    }
+
+    function get (uint _invoiceId) public view returns (Invoice memory) {}
+
     function create (
         uint _vendorId,
         address _clientAddress,
