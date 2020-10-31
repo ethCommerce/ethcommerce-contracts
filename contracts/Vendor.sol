@@ -34,6 +34,11 @@ contract Vendor is Ownable {
         nameService.registerVendorName(_vendorId, _name);
     }
 
+    modifier onlyVendorOwner (uint _vendorId) {
+        require(accessControl.isVendorOwnedByAddress(_vendorId, msg.sender), "not permitted");
+        _;
+    }
+
     /**
      * AccessControl contract implementation
      */
@@ -66,11 +71,6 @@ contract Vendor is Ownable {
 
     function setThumbnail (uint _vendorId, bytes32 _thumbnail) onlyVendorOwner(_vendorId) public {
         data.setThumbnail(_vendorId, _thumbnail);
-    }
-
-    modifier onlyVendorOwner (uint _vendorId) {
-        require(accessControl.isVendorOwnedByAddress(_vendorId, msg.sender), "not permitted");
-        _;
     }
 
     /*
