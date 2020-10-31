@@ -85,9 +85,17 @@ contract VendorInvoice is Ownable, ReentrancyGuard, PullPayment {
         Invoice storage invoice = invoices[_invoiceId];
         require(invoice.status == Status.Paid);
 
-
         invoice.shipmentDataHash = _shipmentDataHash;
         invoice.status = Status.Sent;
     }
+
+    function received (uint _invoiceId, address _clientAddress) public onlyOwner {
+        Invoice storage invoice = invoices[_invoiceId];
+
+        require(invoice.clientAddress == _clientAddress);
+
+        invoice.status = Status.Received;
+    }
 }
+
 
