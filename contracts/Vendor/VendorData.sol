@@ -11,6 +11,8 @@ contract VendorData is Ownable {
         bytes32 thumbnail;
     }
 
+    mapping(bytes32 => bool) isTitleRegistered;
+    
     mapping (uint => Data) data;
 
     function getData (uint _vendorId) public view returns (Data memory) {
@@ -22,6 +24,10 @@ contract VendorData is Ownable {
     }
 
     function setTitle (uint _vendorId, bytes32 _title) public onlyOwner {
+        require(!isTitleRegistered[_title]);
+        
+        isTitleRegistered[data[_vendorId].title] = false;
+        isTitleRegistered[_title] = true;
         data[_vendorId].title = _title;
     }
 
@@ -37,7 +43,7 @@ contract VendorData is Ownable {
 contract VendorDataInterface {
     struct Data {
         bytes32 publicKey;
-        bytes32 title;
+        string title;
         bytes32 description;
         bytes32 thumbnail;
     }
