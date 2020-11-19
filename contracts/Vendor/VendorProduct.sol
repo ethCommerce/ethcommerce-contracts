@@ -8,9 +8,9 @@ contract VendorProduct is Ownable {
         bytes32 title;
         bytes32 description;
         bytes32 thumbnail;
-        bytes32 publicKey;
         uint32 stock;
         uint256 price;
+        bytes16[] tags;
     }
 
     Product[] public products;
@@ -18,57 +18,60 @@ contract VendorProduct is Ownable {
     mapping (uint => uint) productToVendor; // productId to vendorId
     mapping (uint => uint[]) vendorToProducts;
 
-    function isProductOwnedByVendor (uint _productId, uint _vendorId) public view returns (bool) {
+    function isProductOwnedByVendor (uint _vendorId, uint _productId) public view returns (bool) {
         return productToVendor[_productId] == _vendorId;
     }
 
-    function getVendorByProduct (uint _productId) public view returns (uint) {
+    function getVendorIdByProductId (uint _productId) public view returns (uint) {
         return productToVendor[_productId];
     }
 
-    function getProductsByVendor (uint _vendorId) public view returns (uint[] memory) {
+    function getProductIdsByVendorId (uint _vendorId) public view returns (uint[] memory) {
         return vendorToProducts[_vendorId];
     }
 
-    function createProduct (
+    function create (
         uint _vendorId,
         bytes32 _title,
         bytes32 _description,
         bytes32 _thumbnail,
-        bytes32 _publicKey,
         uint32 _stock,
-        uint256 _price
-    ) public onlyOwner {
+        uint256 _price,
+        bytes16[] memory _tags
+    ) public onlyOwner returns (uint) {
          Product memory product = Product({
              title: _title,
              description: _description,
              thumbnail: _thumbnail,
-             publicKey: _publicKey,
              stock: _stock,
-             price: _price
+             price: _price,
+             tags: _tags
          });
 
         products[currentProductId] = product;
         vendorToProducts[_vendorId].push(currentProductId);
 
         currentProductId++;
+        return currentProductId - 1;
     }
+
+    function update () public {} //TODO: implement
 }
 
 contract VendorProductInterface {
     function isProductOwnedByVendor (uint _productId, uint _vendorId) public view returns (bool) {}
 
-    function getVendorByProduct (uint _productId) public view returns (uint) {}
+    function getVendorIdByProductId (uint _productId) public view returns (uint) {}
    
-    function getProductsByVendor (uint _vendorId) public view returns (uint[] memory) {}
+    function getProductIdsByVendorId (uint _vendorId) public view returns (uint[] memory) {}
 
-    function createProduct (
+    function create (
         uint _vendorId,
         bytes32 _title,
         bytes32 _description,
         bytes32 _thumbnail,
-        bytes32 _publicKey,
         uint32 _stock,
-        uint256 _price
+        uint256 _price,
+        bytes16[] memory tags
     ) public {}
 }
