@@ -27,11 +27,8 @@ contract VendorInvoice is Ownable, ReentrancyGuard, PullPayment {
         uint productsCost;
         uint shippingCost;
 
-        bytes32 deliveryAddressHash; // IPFS hash
-        bytes32 shipmentDataHash; // IPFS hash
-
         address clientAddress;
-        bytes32 clientPublicKeyHash;
+        string clientSshPublicKey;
     }
 
     function get (uint _invoiceId) public view returns (Invoice memory) {
@@ -44,18 +41,17 @@ contract VendorInvoice is Ownable, ReentrancyGuard, PullPayment {
         uint[] calldata  _productIds,
         uint[] calldata _quantities,
         bytes32 _deliveryAddressHash,
-        bytes32 _clientPublicKeyHash
+        string memory _clientSshPublicKey,
+        uint _productsCost
     ) public onlyOwner {
         invoices[currentInvoiceId] = Invoice({
             vendorId: _vendorId,
             status: Status.Created,
             productIds: _productIds,
             quantities: _quantities,
-            productsCost: 0,
+            productsCost: _productsCost,
             shippingCost: 0,
-            deliveryAddressHash: _deliveryAddressHash,
-            shipmentDataHash: "",
-            clientPublicKeyHash: _clientPublicKeyHash,
+            clientSshPublicKey: _clientSshPublicKey,
             clientAddress: _clientAddress
         });
     }
@@ -114,8 +110,6 @@ contract VendorInvoiceInterface {
         uint[] quantities;
         uint productsCost;
         uint shippingCost;
-        bytes32 deliveryAddressHash; // IPFS hash
-        bytes32 shipmentDataHash; // IPFS hash
         address clientAddress;
         bytes32 clientPublicKeyHash;
     }
